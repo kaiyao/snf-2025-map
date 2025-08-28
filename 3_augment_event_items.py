@@ -5,6 +5,7 @@ from datetime import date, timedelta
 items_dict = {}
 
 input_file = 'data-combined.json'
+output_file = 'data-augmented.json'
 
 event_number_list = []
 import csv
@@ -44,6 +45,7 @@ def process_venue(item):
         ]
     return [item['Venue']]
 
+
 def process_complex_event(item):
     # For complex events which are actually multiple separate events, split them up
     if item.get('Title') == "Waterloo Street Stories by #WaterlooStKakis":
@@ -51,29 +53,18 @@ def process_complex_event(item):
         item1['Title'] = "Waterloo Street Stories: Outdoor Photo Exhibition"
         item1['Artist'] = "Objectifs"
         item1['Venue'] = {'Value': 'Courtyard, Objectifs', 'Address': 'Objectifs'}
+        item1['Dates'] = "22 Aug to 06 Sep"
+        item1['Time'] = "Tues to Thurs 12pm to 7pm | Fri & Sat 12pm to 9pm | Sun 12pm to 4pm (closed Mondays)"
         item2 = item.copy()
-        item2['Title'] = "A Sundried Time Capsule: Collage & Mark-Making Workshop"
-        item2['Artist'] = "Objectifs"
-        item2['Venue'] = {'Value': 'Annexe, Objectifs', 'Address': 'Objectifs'}
-        item3 = item.copy()
-        item3['Title'] = "Fortune Hands"
-        item3['Artist'] = "P71:SMA"
-        item3['Venue'] = {'Value': 'Courtyard, Objectifs', 'Address': 'Objectifs'}
-        item4 = item.copy()
-        item4['Title'] = "Sound Plot Audio Plays Series"
-        item4['Artist'] = "Centre 42"
-        item4['Venue'] = {'Value': 'Stamford Arts Centre', 'Address': 'Stamford Arts Centre'}
-        item5 = item.copy()
-        item5['Title'] = "Photography series"
-        item5['Artist'] = "Isaiah Cheng"
-        item5['Venue'] = {'Value': 'Back courtyard of Stamford Arts Centre', 'Address': 'Stamford Arts Centre'}
-        item6 = item.copy()
-        item6['Title'] = "Waterloo Street Stories: Familiar Strangers"
-        item6['Artist'] = "SMU-ACM"
-        item6['Venue'] = {'Value': 'Stamford Arts Centre L1 Project Studio', 'Address': 'Stamford Arts Centre'}
-        return [item1, item2, item3, item4, item5, item6]
-    
-    return None
+        item2['Title'] = "Waterloo Street Stories: Photography series by Isaiah Cheng"
+        item2['Artist'] = "SMU-ACM"
+        item2['Venue'] = {'Value': 'Back courtyard of Stamford Arts Centre', 'Address': 'Stamford Arts Centre'}
+        item1['Dates'] = "22 Aug to 06 Sep"
+        item1['Time'] = ""
+        # There are actually 6 items under the listing for Waterloo Street Stories, 
+        # but the rest already have their own separate listings in the JSON
+        return [item1, item2]
+
 
 event_numbers_used = []
 
@@ -93,6 +84,7 @@ with open(input_file, 'r', encoding='utf-8') as f:
 
     items = data['Items']
 
+    # Split items if they are complex (i.e. actually multiple events)
     new_items = []
     for item in items:
         complex_events = process_complex_event(item)
@@ -107,8 +99,13 @@ with open(input_file, 'r', encoding='utf-8') as f:
         item['ProcessedVenues'] = process_venue(item)
         item['EventGuideNumber'] = add_event_number(item)
 
-with open(f'data-combined-augmented.json', 'w', encoding='utf-8') as f:
-    json.dump(data, f, indent=2)
+    data['Items'] = items
+
+# Recount the total count
+own_format_data = data
+own_format_data['TotalCount'] = len(own_format_data['Items'])
+with open(output_file, 'w', encoding='utf-8') as f:
+    json.dump(own_format_data, f, indent=2)
 
 # Debug to see which event numbers are missing
 event_numbers_used.sort(key=lambda x: '{0:0>8}'.format(x).lower())
