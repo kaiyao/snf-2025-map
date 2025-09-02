@@ -22,7 +22,7 @@ while current_date <= end_date:
         for item in items:
             item_id = item['ItemId']
             if item_id not in items_dict:
-                # Augment the item with extracted dates and venues
+                # Augment the item with extracted dates
                 item['ProcessedEventDates'] = [current_date.strftime('%Y-%m-%d')]
                 items_dict[item_id] = item
             else:

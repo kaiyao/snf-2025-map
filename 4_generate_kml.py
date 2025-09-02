@@ -103,7 +103,11 @@ def data_to_kml(data, kml_path):
             href = ET.SubElement(icon, 'href')
             href.text = f"https://kaiyao-snf2025.s3.ap-southeast-1.amazonaws.com/icons/generated/{styles}_{number}.png"
 
+    # Sort the items in data['Items'] by EventGuideNumber (if available), then by Title
+    data['Items'].sort(key=lambda x: (int(x.get('EventGuideNumber')) if x.get('EventGuideNumber') is not None else 99999, x.get('Title').lower()))
+
     for item in data['Items']:
+        # print(item.get('EventGuideNumber'), item.get('Title'))
         
         for item_venue in item.get('ProcessedVenues', {}):
             for item_category in item.get('Category', {}):
