@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
 input_file = 'data-augmented.json'
-input_coordinate_ref_file = 'Singapore Night Festival Map Test.kml'
+input_coordinate_ref_file = 'Singapore Night Festival Map Ref.kml'
 output_file = 'result.kml'
 
 def get_coordinates_from_kml(kml_path, placemark_name):

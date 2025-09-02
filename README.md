@@ -28,3 +28,9 @@ Each script is meant to be run one after the other, in order.
 
 `5_generate_icons.py`: this script generates the individual numbered icons using the templates for each category found in the icons/template folder. These templates were copied from the PDF guide using Inkscape, and then exported as PNGs. You also need the Prodigy Sans font from this repo: https://github.com/weiweihuanghuang/Prodigy-Sans (copy the fonts folder to this folder). After generating you will need to upload the icons to a server that you can reference in the KML (in step 4).
 
+## Notes
+In step 4, the script references a "Reference KML file". This is the file where the coordinates of each event is fetched from.
+
+The data on the heritage.sg website only has coordinates for selected locations. Thus an earlier version of this script generated a CSV file with each event name and the address/lat/lng which can be imported into My Maps, which will then do an address lookup for each event without coordinates.
+
+The "Reference KML file" is then the KML file exported from My Maps. Unfortunately, My Maps doesn't export the looked-up coordinates unless you manually move each marker a bit. Either way, I manually moved each marker to be nearer to the actual event location rather than just the building's location.
